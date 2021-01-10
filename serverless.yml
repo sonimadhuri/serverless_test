@@ -1,0 +1,51 @@
+# NOTE: update this with your service name
+service: cecp-project
+
+# Create an optimized package for our functions 
+package:
+  individually: true
+
+plugins:
+  - serverless-bundle # Package our functions with Webpack
+  - serverless-offline
+  - serverless-dotenv-plugin # Load .env as environment variables
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  stage: dev
+  region: us-east-1
+  # To load environment variables externally
+  # rename env.example to .env and uncomment
+  # the following line. Also, make sure to not
+  # commit your .env.
+  #
+
+  environment:
+    DB_TYPE: ${env:DB_TYPE}
+    DB_DEBUG: ${env:DB_DEBUG}
+    DB_HOST: ${env:DB_HOST}
+    DB_PORT: ${env:DB_PORT}
+    DB_DATABASE: ${env:DB_DATABASE}
+    DB_USER: ${env:DB_USER}
+    DB_PASSWORD: ${env:DB_PASSWORD}
+functions:
+  hello:
+    handler: handler.hello
+    events:
+      - http:
+          path: hello
+          method: get
+  signup:
+    handler: src/auth/handler.signup
+    events:
+      - http:
+          path: /v1/auth/signup
+          method: post
+
+  signin:
+    handler: src/auth/handler.signin
+    events:
+      - http:
+          path: /v1/auth/signin
+          method: post

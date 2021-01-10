@@ -1,0 +1,34 @@
+{
+  "name": "serverless-typescript-starter",
+  "version": "0.1.0",
+  "description": "A TypeScript starter for Serverless Framework",
+  "main": "handler.js",
+  "scripts": {
+    "test": "serverless-bundle test",
+    "knex": "knex --knexfile knexfile.ts",
+    "migrate:up": "npm run knex migrate:latest",
+    "migrate:down": "npm run knex migrate:rollback",
+    "migrate:make": "npm run knex migrate:make -- -x ts",
+    "migrate:list": "npm run knex migrate:list"
+  },
+  "author": "",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AnomalyInnovations/serverless-typescript-starter.git"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.64",
+    "@types/jest": "^26.0.14",
+    "serverless-bundle": "3.2.1",
+    "serverless-dotenv-plugin": "^3.0.0",
+    "serverless-offline": "^6.8.0"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "express-async-handler": "^1.1.4",
+    "knex": "^0.21.15",
+    "mysql2": "^2.2.5",
+    "objection": "^2.2.5"
+  }
+}
