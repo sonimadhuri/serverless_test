@@ -1,9 +1,14 @@
 import { APIGatewayProxyResult } from 'aws-lambda';
+var jwt = require('jsonwebtoken');
 
 import { res } from '@core/utils';
-import { UserRepo } from './repositories';
+import { UserRepo } from '@app/common';
 
 var bcrypt = require('bcryptjs');
+
+export async function generateToken(data){
+  return await jwt.sign({ id: data.id, fname: data.firstName, email: data.email }, process.env.JWT_SECRET);
+}
 
 export async function userSignup(inputs): Promise<APIGatewayProxyResult> {
   try {
@@ -31,7 +36,8 @@ export async function userSignin(inputs): Promise<APIGatewayProxyResult> {
     if(user){
       const isPasswordValid = bcrypt.compareSync(inputs.password, user.password);
       if(isPasswordValid){
-        return res.sucess({ message: 'Login successful' })
+        const accessToken = await generateToken(user);
+        return res.sucess({ message: 'Login successful', data: {accessToken, ...user } });
       } else {
         return res.error({ statusCode: 403, message: 'Incorrect password' })
       }
@@ -39,6 +45,24 @@ export async function userSignin(inputs): Promise<APIGatewayProxyResult> {
       return res.error({ statusCode: 403, message: "Incorrect E-mail"})
     }
   } catch (e) {
-    throw new Error('User signup failed');
+    throw new Error('User signin failed');
   }
+}
+
+export async function updateUserProfile(inputs): Promise<APIGatewayProxyResult> {
+  try {
+    const userRepo = new UserRepo();
+    const { user, ...fieldsToBeUpdated } = inputs;
+    await userRepo.query().update(fieldsToBeUpdated).where({ id: inputs.user.id });
+    const accessToken = await generateToken(user);
+    const userDetails = await userRepo.query().findById(inputs.user.id);
+    return res.sucess({ statusCode: 200, data: {
+      ...userDetails,
+      accessToken,
+    }, message: 'User data fetched' });
+  } catch (e) {
+    console.log(e)
+    throw new Error('Could not update user profile');
+  }
+
 }

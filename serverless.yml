@@ -36,6 +36,13 @@ functions:
       - http:
           path: hello
           method: get
+          authorizer:
+            name: authFunction
+            identitySource: method.request.header.Authorization 
+
+  authFunction:
+    handler: src/auth/handler.authorize
+
   signup:
     handler: src/auth/handler.signup
     events:
@@ -49,3 +56,33 @@ functions:
       - http:
           path: /v1/auth/signin
           method: post
+
+  updateUser:
+    handler: src/auth/handler.updateUser
+    events:
+      - http:
+          path: /v1/auth/profile
+          method: put    
+          authorizer:
+            name: authFunction
+            identitySource: method.request.header.Authorization 
+
+  fetchUsers:
+    handler: src/user/handler.fetchUsers
+    events:
+      - http:
+          path: /v1/users
+          method: get    
+          authorizer:
+            name: authFunction
+            identitySource: method.request.header.Authorization  
+               
+  toggleUserFollowing:
+    handler: src/user/handler.toggleUserFollowing
+    events:
+      - http:
+          path: /v1/users/{userId}/toggle-following
+          method: post    
+          authorizer:
+            name: authFunction
+            identitySource: method.request.header.Authorization 

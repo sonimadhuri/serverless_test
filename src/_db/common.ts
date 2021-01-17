@@ -20,8 +20,8 @@ export function commonFields(knex: Knex, table) {
 
 export function creatorModifierFiels(table) {
 
-  table.bigInteger('created_by').notNullable();
-  table.bigInteger('modified_by').notNullable();
+  table.bigInteger('created_by').unsigned().notNullable();
+  table.bigInteger('modified_by').unsigned().notNullable();
   table
     .foreign('created_by')
     .references('id')

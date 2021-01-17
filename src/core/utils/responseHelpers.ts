@@ -7,7 +7,7 @@ type ErrorResponse = {
 
 type SuccessResponse = {
   statusCode?: number,
-  message: string,
+  message?: string,
   data?: string | Record<string, any>
 }
 

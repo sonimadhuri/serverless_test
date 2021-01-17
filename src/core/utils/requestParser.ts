@@ -4,6 +4,7 @@ export const requestParser = (event: APIGatewayEvent) => {
   let inputs = {
     ...event.pathParameters,
     ...event.queryStringParameters,
+    user: event.requestContext.authorizer.userData //Injecting user data from authorizer
   }
   if (event.body) {
     inputs = {
